@@ -65,7 +65,6 @@ def submenu1(update:Update, context:CallbackContext):
     query.answer()
     message = """ Berikut ensiklopedia AIPAD\n/start --> memulai program chatbot\n/regist --> registrasi ID Telegram untuk akses chatbot\nRaw --> format data berupa detail yang dapat diolah lebih lanjut\nAgregat --> format data berupa ringkasan yang mengandung agregasi data (jumlah/rata-rata)\nInfografis --> option menu untuk generate grafik data sesuai keinginan"""
     query.edit_message_text(text=message)
-   ## df = pd.read_excel('./File_excel/data_mahasiswa_aktif.xlsx')
     return ConversationHandler.END
 
 def submenu2(update:Update, context:CallbackContext):
@@ -128,9 +127,8 @@ def generate_chart(prompt, graph, data):
 
     user_query = f"write only python code (do not add your description and do not add '```') to {prompt} menggunakan seaborn {graph} dengan pallete pastel, figsize (8,6), dan menambahkan %matplotlib inline based on the following data:\n\n{data}"
 
-    # Menggunakan GPT-4 untuk mendapatkan instruksi untuk plot
     response = openai.ChatCompletion.create(
-        model="gpt-4",  # Sesuaikan dengan model terbaru yang tersedia
+        model="gpt-4", 
         messages=[
             {"role": "system", "content": "You are a helpful assistant that generates plots."},
             {"role": "user", "content": user_query}
@@ -138,15 +136,12 @@ def generate_chart(prompt, graph, data):
         max_tokens=200,
     )
 
-    # Mengambil instruksi dari hasil respons GPT-4
     plot_instructions = response.choices[0].message["content"].strip()
     print(plot_instructions)
 
     try:
-        # Mencoba menjalankan instruksi menggunakan exec
         exec(plot_instructions)
         
-        # Simpan plot dalam bentuk bytes
         img_bytes_io = BytesIO()
         plt.savefig(img_bytes_io, format='png')
         img_bytes_io.seek(0)
@@ -189,20 +184,15 @@ def gpt_raw(update: Update, context:CallbackContext):
             hasil_sql = response3.choices[0].message["content"]
             print(hasil_sql)
             try:
-                # Query read
                 with open(f'./data/{hasil_sql}', 'r') as file:
                     sql_query = file.read()
                 query = text(sql_query)
 
-                # Eksekusi query
                 df = pd.read_sql_query(query, conn)
                 excel_bytes = generate_excel_bytes(df)
                 split = hasil_sql.split('.')
                 nama_file = split[0]
-                # print(f"nama file : {nama_file}")
                 file_name = f"{nama_file}.xlsx"
-
-                # Kirim file Excel ke pengguna
                 chat_id = update.effective_chat.id
                 context.bot.send_document(chat_id=chat_id, document=InputFile(excel_bytes, filename=file_name))
             except Exception as e:
@@ -318,13 +308,10 @@ def graph_data(update: Update, context:CallbackContext):
             hasil_sql = response3.choices[0].message["content"]
             print(hasil_sql)
             nama_data = hasil_sql.split('.')
-            # try:
-            # Query read
             with open(f'./data/{hasil_sql}', 'r') as file:
                 sql_query = file.read()
             query = text(sql_query)
 
-            # Eksekusi query
             df = pd.read_sql_query(query, conn)
             context.user_data['df'] = df
             print(df.head())
@@ -335,10 +322,7 @@ def graph_data(update: Update, context:CallbackContext):
             print(graph_type)
             chat_id = update.effective_chat.id
 
-            # Tanyakan prompt kepada pengguna
             context.bot.send_message(chat_id = chat_id, text=f"Anda memilih jenis grafik {graph_type} untuk {nama_data[0]}. Silahkan masukan perintah pembuatan infografis yang dibutuhkan\n\n Contoh : tampilkan persentase jumlah mahasiswa berdasarkan angkatan")
-            
-            # Ganti state ke PROMPT_INPUT
             print("Memasuki return SEND_CHART")
             return SEND_CHART
         else:
@@ -359,18 +343,14 @@ def create_chart(update: Update, context: CallbackContext):
     graph_type = context.user_data.get('graph_type')
     
     try:
-        # Create chart using df, format, and prompt
         print("Creating chart based on the prompt")
         img_bytes_io = generate_chart(prompt, graph_type, data)
         if img_bytes_io is not None:
-        # Send chart directly to the user
             context.bot.send_photo(chat_id=chat_id, photo=img_bytes_io, caption=f"{graph_type}.png")
         else:
             update.message.reply_text("Failed to create the chart. Maybe the data format or prompt is incorrect.")
     except Exception as e:
             update.message.reply_text(f" Permintaan anda tidak dapat dipenuhi karena{e}")
-
-    # End the conversation
     return ConversationHandler.END
 
 def back_main_menu(update:Update, context:CallbackContext):
@@ -422,7 +402,6 @@ def main():
             GPT_RAW : [MessageHandler(Filters.text, gpt_raw)],
             GPT_AGG : [MessageHandler(Filters.text, gpt_agg)],      
             DATA_MESSAGE: [CallbackQueryHandler(graph_type, pattern="^(barplot|pie|lineplot|scatterplot)$")],
-            # PROMPT: [MessageHandler(Filters.text, prompt_input)], # pattern="^(barplot|pie|lineplot|scatterplot)$"
             SEND_CHART: [MessageHandler(Filters.text, create_chart)],
             WAITING_MESSAGE : [MessageHandler(Filters.text, send_regist)],
 
