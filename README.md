@@ -1,5 +1,5 @@
 # AIPAD: Chatbot AI for Data and Information Requests
-![](https://ibb.co/5GdPTMm)
+![](https://i.ibb.co/n6TFrg9/aipad-pict.png)
 
 ## Overview
 In the digital era, AI-powered chatbots based on natural language processing (NLP) have become a popular trend to improve efficiency and user experience. Universitas Padjadjaran (Unpad), focusing on quality and user experience, aims to leverage this technology to enhance efficiency and provide the best service to the academic community and the public.
@@ -151,7 +151,7 @@ Despite these challenges, strategic plans have been outlined to address these we
 
 ## Contributors
 - [Fikri Aziz Shalahuddin (Leader)](https://www.linkedin.com/in/fikri-aziz)
-- Muhammad Rafli
+- [Muhammad Rafli](https://www.linkedin.com/in/muhammad-rafli)
 - Muhammad Fadhil Ardiansyah
 </s>
 
