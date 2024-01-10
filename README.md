@@ -1,6 +1,6 @@
 # AIPAD: Chatbot AI for Data and Information Requests
 <p align="center">
-  <a href="https://github.com/fikriash/AIPAD-chatbot"><img src="https://i.ibb.co/n6TFrg9/aipad-pict.png" alt="fikriash" width="720" height="720"></a>
+  <a href="https://github.com/fikriash/AIPAD-NLPChatbot"><img src="https://i.ibb.co/n6TFrg9/aipad-pict.png" alt="fikriash" width="720" height="720"></a>
 </p>
 
 ## Overview
